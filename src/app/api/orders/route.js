@@ -94,7 +94,7 @@ export async function POST(req) {
     await connectToDb();
 
     const newOrder = new Order(body);
-    await newOrder.save();
+    await newOrder.save({ _id: 0, __v: 0 });
 
     return NextResponse.json(
       {

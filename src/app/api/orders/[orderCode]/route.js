@@ -7,7 +7,7 @@ export async function GET(req, { params }) {
     const { orderCode } = params;
 
     await connectToDb();
-    const order = await Order.findOne({ code: orderCode });
+    const order = await Order.findOne({ code: orderCode, _id: 0, __v: 0 });
 
     if (!order) {
       return NextResponse.json(
