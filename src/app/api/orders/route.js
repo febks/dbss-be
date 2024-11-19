@@ -29,12 +29,12 @@ export async function GET(req) {
       }
     }
 
-    const orders = await Order.find(filter, { _id: 0 })
+    const orders = await Order.find(filter, { _id: 0, __v: 0 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(size)
     
-    const totalElements = await Order.countDocuments(filter, { _id: 0 });
+    const totalElements = await Order.countDocuments(filter, { _id: 0, __v: 0 });
     const totalPages = Math.ceil(totalElements / size);
     const numberOfElements = orders.length;
     const offset = (page + 1) * size;

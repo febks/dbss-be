@@ -72,3 +72,31 @@ export async function GET(req, { params }) {
     )
   }
 }
+
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    await connectToDb();
+
+    const newInstanceStep = new InstanceStep(body);
+    await newInstanceStep.save();
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Success create instance step",
+        data: newOrder
+      },
+      { status: 200 }
+    )
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "error" + error.message,
+        data: {}
+      },
+      { status: 500 }
+    )
+  }
+}
