@@ -1,12 +1,13 @@
-import connectToDb from "@/lib/db";
-import Order from "@/models/order-collection-models";
-import { NextResponse } from "next/server";
+import { connectToDb } from '@/lib/db';
+import Instance from '@/models/instance-collection';
 
-export async function GET(req) {
+export async function GET(req, { params }) {
   try {
     const { searchParams } = new URL(req.url);
+    const name = searchParams.get("nameLike");
+    const resource = searchParams.get("resourceLike");
+    const service = searchParams.get("serviceLike");
     const status = searchParams.get("statusIn");
-    const itemCode = searchParams.get("itemCodeIn");
 
     const page = parseInt(searchParams.get("page") || "0");
     const size = parseInt(searchParams.get("size") || "10");
@@ -15,6 +16,21 @@ export async function GET(req) {
     await connectToDb();
     const filter = {};
 
+    if (name) {
+      const regex = new RegExp(name, 'i');
+      filter.name = { $regex: regex };
+    }
+
+    if (resource) {
+      const regex = new RegExp(resource, 'i');
+      filter.resource = { $regex: regex };
+    }
+
+    if (service) {
+      const regex = new RegExp(service, 'i');
+      filter.service = { $regex: regex };
+    }
+
     if (status) {
       const parsedStatus = JSON.parse(status);
       if (Array.isArray(parsedStatus) && parsedStatus.length > 0) {
@@ -22,21 +38,15 @@ export async function GET(req) {
       }
     }
 
-    if (itemCode) {
-      const parsedItemCodes = JSON.parse(itemCode);
-      if (Array.isArray(parsedItemCodes) && parsedItemCodes.length > 0) {
-        filter['item.code'] = { $in: parsedItemCodes };
-      }
-    }
-
-    const orders = await Order.find(filter, { _id: 0, __v: 0 })
+    const instances = await Instance
+      .find(filter, { _id: 0, __v: 0 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(size)
-    
-    const totalElements = await Order.countDocuments(filter, { _id: 0, __v: 0 });
+
+    const totalElements = await Instance.countDocuments();
     const totalPages = Math.ceil(totalElements / size);
-    const numberOfElements = orders.length;
+    const numberOfElements = instances.length;
     const offset = (page + 1) * size;
     const unpaged = totalPages === 0 ? true : false;
     const paged = totalPages > 0 ? true : false;
@@ -44,9 +54,9 @@ export async function GET(req) {
     return NextResponse.json(
       {
         success: true,
-        message: "Success get order",
+        message: "Success get instance collection",
         data: {
-          content: orders,
+          content: instances,
           pageable: {
             pageNumber: page,
             pageSize: size,
@@ -93,14 +103,14 @@ export async function POST(req) {
     const body = await req.json();
     await connectToDb();
 
-    const newOrder = new Order(body);
-    await newOrder.save({}, { _id: 0, __v: 0 });
+    const newInstance = new Instance(body);
+    await newInstance.save({}, { _id: 0, __v: 0 });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Success create order",
-        data: newOrder
+        message: "Success create instance",
+        data: newInstance
       },
       { status: 201 }
     )

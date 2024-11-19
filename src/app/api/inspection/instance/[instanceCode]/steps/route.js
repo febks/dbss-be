@@ -65,7 +65,7 @@ export async function GET(req, { params }) {
     return NextResponse.json(
       {
         success: false,
-        message: "error" + error.message,
+        message: "error: " + error.message,
         data: {}
       },
       { status: 500 }
@@ -79,7 +79,7 @@ export async function POST(req) {
     await connectToDb();
 
     const newInstanceStep = new InstanceStep(body);
-    await newInstanceStep.save();
+    await newInstanceStep.save({}, { instanceCode: "" });
 
     return NextResponse.json(
       {
@@ -87,13 +87,13 @@ export async function POST(req) {
         message: "Success create instance step",
         data: newOrder
       },
-      { status: 200 }
+      { status: 201 }
     )
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        message: "error" + error.message,
+        message: "error: " + error.message,
         data: {}
       },
       { status: 500 }
