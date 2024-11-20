@@ -11,6 +11,8 @@ const instanceSchema = new mongoose.Schema(
       code: { type: String, required: false },
       name: { type: String, required: false },
     },
+    createdBy: { type: String, required: false },
+    updatedBy: { type: String, required: false },
   },
   { timestamps: true }
 );

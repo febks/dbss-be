@@ -14,6 +14,8 @@ const instanceStepSchema = new mongoose.Schema(
     status: { type: String, required: true },
     outcomeAchieved: { type: Boolean, required: false },
     overallOutcome: { type: String, required: false },
+    createdBy: { type: String, required: false },
+    updatedBy: { type: String, required: false },
   },
   { timestamps: true }
 );
