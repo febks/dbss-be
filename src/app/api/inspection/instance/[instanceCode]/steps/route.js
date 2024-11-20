@@ -1,5 +1,6 @@
 import InstanceStep from "@/models/instance-step-models";
 import { connectToDb } from '@/lib/db';
+import { NextResponse } from 'next/server';
 
 export async function GET(req, { params }) {
   try {
