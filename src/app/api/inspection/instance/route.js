@@ -1,4 +1,4 @@
-import { connectToDb } from '@/lib/db';
+import connectToDb from '@/lib/db';
 import Instance from '@/models/instance-collection';
 import { NextResponse } from 'next/server';
 
