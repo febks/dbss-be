@@ -104,14 +104,27 @@ export async function POST(req) {
     const body = await req.json();
     await connectToDb();
 
-    const newInstance = new Instance(body);
-    await newInstance.save({}, { _id: 0, __v: 0 });
+    if (body.start) {
+      body.start = new Date(body.start);
+      if (isNaN(body.start)) {
+        throw new Error("Invalid date format for 'start'");
+      }
+    }
+
+    if (body.end) {
+      body.end = new Date(body.end);
+      if (isNaN(body.end)) {
+        throw new Error("Invalid date format for 'end'");
+      }
+    }
+
+    const newInstance = await Instance.create(body);
 
     return NextResponse.json(
       {
         success: true,
         message: "Success create instance",
-        data: newInstance
+        data: newInstance.toObject()
       },
       { status: 201 }
     )
